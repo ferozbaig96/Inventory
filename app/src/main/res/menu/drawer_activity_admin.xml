@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group
+        android:id="@+id/grp_management"
+        android:checkableBehavior="single">
+        <item android:title="Management">
+            <menu>
+                <item
+                    android:id="@+id/nav_category"
+                    android:icon="@drawable/ic_error_red_500_24dp"
+                    android:title="Category" />
+                <item
+                    android:id="@+id/nav_products"
+                    android:icon="@drawable/ic_error_red_500_24dp"
+                    android:title="Products" />
+                <item
+                    android:id="@+id/nav_inventory"
+                    android:icon="@drawable/ic_error_red_500_24dp"
+                    android:title="Inventory" />
+            </menu>
+        </item>
+    </group>
+
+    <group
+        android:id="@+id/grp_orders"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_orders"
+            android:icon="@drawable/ic_error_red_500_24dp"
+            android:title="Orders" />
+    </group>
+
+    <group
+        android:id="@+id/grp_settings"
+        android:checkableBehavior="single">
+        <item android:title="Settings">
+            <menu>
+                <item
+                    android:id="@+id/nav_users"
+                    android:icon="@drawable/ic_error_red_500_24dp"
+                    android:title="Users" />
+                <item
+                    android:id="@+id/nav_priviliges"
+                    android:icon="@drawable/ic_error_red_500_24dp"
+                    android:title="Priviliges" />
+                <item
+                    android:id="@+id/nav_chat"
+                    android:icon="@drawable/ic_error_red_500_24dp"
+                    android:title="Chat" />
+                <item
+                    android:id="@+id/nav_notifications"
+                    android:icon="@drawable/ic_error_red_500_24dp"
+                    android:title="Notifications" />
+            </menu>
+        </item>
+    </group>
+
+    <group
+        android:id="@+id/grp_delivery"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_delivery"
+            android:icon="@drawable/ic_error_red_500_24dp"
+            android:title="Delivery" />
+    </group>
+
+    <group
+        android:id="@+id/grp_log"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_log"
+            android:icon="@drawable/ic_error_red_500_24dp"
+            android:title="Log" />
+    </group>
+
+
+</menu>
