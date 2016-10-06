@@ -6,26 +6,25 @@ import android.os.Bundle;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.facebook.stetho.Stetho;
-import com.facebook.stetho.json.ObjectMapper;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.gson.Gson;
 import com.uphyca.stetho_realm.RealmInspectorModulesProvider;
 
-import java.util.HashMap;
-import java.util.Map;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-import Models.GSONModel.GCategory;
-import Models.RealmModel.Category;
+import Models.GSONModel.GJSONSource;
+import Models.RealmModel.JSONSource;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 
@@ -59,8 +58,8 @@ public class MainActivity extends AppCompatActivity {
         // Create the Realm configuration
         realmConfig = new RealmConfiguration.Builder(this).name("myRealm.realm").build();
 
-        //Resetting realm
-        //Realm.deleteRealm(realmConfig);
+        //Resetting realm TODO
+        Realm.deleteRealm(realmConfig);
 
         // Open the Realm for the UI thread.
         realm = Realm.getInstance(realmConfig);
@@ -85,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        myRef.addValueEventListener(new ValueEventListener() {
+      /*  myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
@@ -102,12 +101,19 @@ public class MainActivity extends AppCompatActivity {
             public void onCancelled(DatabaseError databaseError) {
 
             }
-        });
+        });*/
+
+
+
+        fetchData();
 /*
 
 To add an object
 
-        GCategory category = new GCategory(50, "sa");
+        GCategory category = new GCategory();
+        category.id=234;
+        category.name="ddd";
+
         myRef.child("categories").push().setValue(category);
 */
 
@@ -135,5 +141,43 @@ To add an object
             startActivity(new Intent(MainActivity.this, AdminActivity.class));
 
     }
+
+    void fetchData() {
+        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                GJSONSource obj = dataSnapshot.getValue(GJSONSource.class);
+                String data = new Gson().toJson(obj);
+
+                JSONObject json = null;
+                try {
+                    json = new JSONObject(data);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                realm.close();
+                Realm.deleteRealm(realmConfig);     //resetting realm
+                realm = Realm.getInstance(realmConfig);
+                loadJsonFromJsonObject(realm, json);
+
+                Toast.makeText(MainActivity.this, "Database updated. Please reopen app for the changes to take place", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+    }
+
+    private void loadJsonFromJsonObject(Realm realm, final JSONObject json) {
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                realm.createObjectFromJson(JSONSource.class, json);
+            }
+        });
+    }
+
 
 }
