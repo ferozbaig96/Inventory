@@ -52,14 +52,18 @@ public class MainActivity extends AppCompatActivity {
 
         // Create the Realm configuration
         realmConfig = new RealmConfiguration.Builder(this).name("myRealm.realm").build();
-/*
 
         //Resetting realm
-        Realm.deleteRealm(realmConfig);
-*/
+        //Realm.deleteRealm(realmConfig);
 
         // Open the Realm for the UI thread.
         realm = Realm.getInstance(realmConfig);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        realm.close(); // Remember to close Realm when done.
     }
 
     private void initialise() {
