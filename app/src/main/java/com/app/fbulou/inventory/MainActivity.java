@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.facebook.stetho.Stetho;
+import com.facebook.stetho.json.ObjectMapper;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -20,6 +21,11 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.uphyca.stetho_realm.RealmInspectorModulesProvider;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import Models.GSONModel.GCategory;
+import Models.RealmModel.Category;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 
@@ -62,8 +68,8 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
         realm.close(); // Remember to close Realm when done.
+        super.onDestroy();
     }
 
     private void initialise() {
@@ -88,9 +94,8 @@ public class MainActivity extends AppCompatActivity {
                     t = t + "\n\n" + myChild.getValue();
                 }
 
-                Log.i("TAG", t);
+                Log.e("TAG", t);
                 Toast.makeText(MainActivity.this, t, Toast.LENGTH_SHORT).show();
-
             }
 
             @Override
@@ -98,6 +103,14 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+/*
+
+To add an object
+
+        GCategory category = new GCategory(50, "sa");
+        myRef.child("categories").push().setValue(category);
+*/
+
     }
 
     private void validateForm() {
