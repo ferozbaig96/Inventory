@@ -10,12 +10,18 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
+import com.facebook.stetho.Stetho;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.uphyca.stetho_realm.RealmInspectorModulesProvider;
+
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -25,6 +31,9 @@ public class MainActivity extends AppCompatActivity {
     final FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference myRef = database.getReference();
 
+    private Realm realm;
+    private RealmConfiguration realmConfig;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,26 +41,25 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        //setting up stetho for viewing the realm database
+        Stetho.initialize(
+                Stetho.newInitializerBuilder(this)
+                        .enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
+                        .enableWebKitInspector(RealmInspectorModulesProvider.builder(this).build())
+                        .build());
+
         initialise();
 
-        myRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+        // Create the Realm configuration
+        realmConfig = new RealmConfiguration.Builder(this).name("myRealm.realm").build();
+/*
 
-                String t = "";
-                for (DataSnapshot myChild : dataSnapshot.getChildren()) {
-                    t = t + "\n\n" + myChild.getValue();
-                }
+        //Resetting realm
+        Realm.deleteRealm(realmConfig);
+*/
 
-                Log.e("TAG", t);
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
+        // Open the Realm for the UI thread.
+        realm = Realm.getInstance(realmConfig);
     }
 
     private void initialise() {
@@ -64,6 +72,26 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 validateForm();
+            }
+        });
+
+        myRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                String t = "";
+                for (DataSnapshot myChild : dataSnapshot.getChildren()) {
+                    t = t + "\n\n" + myChild.getValue();
+                }
+
+                Log.i("TAG", t);
+                Toast.makeText(MainActivity.this, t, Toast.LENGTH_SHORT).show();
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
             }
         });
     }
