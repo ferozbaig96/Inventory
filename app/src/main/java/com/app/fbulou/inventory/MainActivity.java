@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -23,7 +24,13 @@ import com.uphyca.stetho_realm.RealmInspectorModulesProvider;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import Models.GSONModel.GCategory;
 import Models.GSONModel.GJSONSource;
+import Models.RealmModel.Category;
 import Models.RealmModel.JSONSource;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
@@ -106,6 +113,8 @@ public class MainActivity extends AppCompatActivity {
 
 
         fetchData();
+
+
 /*
 
 To add an object
@@ -115,8 +124,12 @@ To add an object
         category.name="ddd";
 
         myRef.child("categories").push().setValue(category);
+
+        myRef.child("categories").child("serially_in_order").setValue(category);
 */
 
+
+        Log.e("TAG","done update");
     }
 
     private void validateForm() {
@@ -146,6 +159,11 @@ To add an object
         myRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+
+                Log.e("TAGGYSD",dataSnapshot.getChildrenCount()+"");
+                Log.e("TAGGYSD",dataSnapshot.getValue(GCategory.class).toString());
+                Log.e("TAGGYSD",dataSnapshot+"");
+
                 GJSONSource obj = dataSnapshot.getValue(GJSONSource.class);
                 String data = new Gson().toJson(obj);
 

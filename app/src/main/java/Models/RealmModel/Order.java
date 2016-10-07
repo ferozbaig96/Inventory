@@ -8,10 +8,10 @@ public class Order extends RealmObject {
     public int id;
     public String client_fname, client_lname, client_email;
     public String cAddress, cDeliveryTime, PaymentMethod;
-    public long phone;
-    public RealmList<Product> products;
-    public float subtotal, tax;
-    public User delivery_boy, sales_man;
+    public long cPhone;
+    public RealmList<MyInteger> products;
+    public float shipping, subtotal, tax;
+    public int delivery_boy, sales_man;
 
     /*
         id

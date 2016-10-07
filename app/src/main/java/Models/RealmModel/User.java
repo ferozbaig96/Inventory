@@ -5,7 +5,7 @@ import io.realm.RealmObject;
 public class User extends RealmObject {
     public int id;
     public String name, email, password;
-    public int phone;
+    public long phone;
     public int type;
 
 
