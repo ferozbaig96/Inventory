@@ -10,7 +10,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.facebook.stetho.Stetho;
 import com.google.firebase.database.DataSnapshot;
@@ -24,13 +23,7 @@ import com.uphyca.stetho_realm.RealmInspectorModulesProvider;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
-import Models.GSONModel.GCategory;
 import Models.GSONModel.GJSONSource;
-import Models.RealmModel.Category;
 import Models.RealmModel.JSONSource;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
@@ -91,29 +84,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-      /*  myRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-
-                String t = "";
-                for (DataSnapshot myChild : dataSnapshot.getChildren()) {
-                    t = t + "\n\n" + myChild.getValue();
-                }
-
-                Log.e("TAG", t);
-                Toast.makeText(MainActivity.this, t, Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });*/
-
-
-
-        fetchData();
-
+        addListeners();
 
 /*
 
@@ -127,9 +98,69 @@ To add an object
 
         myRef.child("categories").child("serially_in_order").setValue(category);
 */
+    }
+
+    void addListeners() {
+        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                Log.e("TAGGYSD",dataSnapshot.getChildrenCount()+"");
+                Log.e("TAGG catchildrenCount",dataSnapshot.child("categories").getChildrenCount()+"");
+                Log.e("TAGGYSD",dataSnapshot+"");
+
+                recievedData(dataSnapshot);
+
+                /*Toast.makeText(MainActivity.this, "Database updated. Please reopen app for the changes to take place", Toast.LENGTH_SHORT).show();*/
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+
+        myRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+              recievedData(dataSnapshot);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
 
 
-        Log.e("TAG","done update");
+    }
+
+    void recievedData(DataSnapshot dataSnapshot)
+    {
+        GJSONSource obj = dataSnapshot.getValue(GJSONSource.class);
+        String data = new Gson().toJson(obj);
+
+        JSONObject json = null;
+        try {
+            json = new JSONObject(data);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        realm.close();
+        Realm.deleteRealm(realmConfig);     //resetting realm
+        realm = Realm.getInstance(realmConfig);
+        loadJsonFromJsonObject(realm, json);
+
+    }
+
+    private void loadJsonFromJsonObject(Realm realm, final JSONObject json) {
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                realm.createObjectFromJson(JSONSource.class, json);
+            }
+        });
     }
 
     private void validateForm() {
@@ -154,48 +185,5 @@ To add an object
             startActivity(new Intent(MainActivity.this, AdminActivity.class));
 
     }
-
-    void fetchData() {
-        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-
-                Log.e("TAGGYSD",dataSnapshot.getChildrenCount()+"");
-                Log.e("TAGGYSD",dataSnapshot.getValue(GCategory.class).toString());
-                Log.e("TAGGYSD",dataSnapshot+"");
-
-                GJSONSource obj = dataSnapshot.getValue(GJSONSource.class);
-                String data = new Gson().toJson(obj);
-
-                JSONObject json = null;
-                try {
-                    json = new JSONObject(data);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-                realm.close();
-                Realm.deleteRealm(realmConfig);     //resetting realm
-                realm = Realm.getInstance(realmConfig);
-                loadJsonFromJsonObject(realm, json);
-
-                Toast.makeText(MainActivity.this, "Database updated. Please reopen app for the changes to take place", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });
-    }
-
-    private void loadJsonFromJsonObject(Realm realm, final JSONObject json) {
-        realm.executeTransaction(new Realm.Transaction() {
-            @Override
-            public void execute(Realm realm) {
-                realm.createObjectFromJson(JSONSource.class, json);
-            }
-        });
-    }
-
 
 }
