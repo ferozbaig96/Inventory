@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.facebook.stetho.Stetho;
 import com.google.firebase.database.DataSnapshot;
@@ -25,6 +26,7 @@ import org.json.JSONObject;
 
 import Models.GSONModel.GJSONSource;
 import Models.RealmModel.JSONSource;
+import Models.RealmModel.User;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 
@@ -38,6 +40,9 @@ public class MainActivity extends AppCompatActivity {
 
     private Realm realm;
     private RealmConfiguration realmConfig;
+
+    long phoneno;
+    int type = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,9 +110,9 @@ To add an object
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-                Log.e("TAGGYSD",dataSnapshot.getChildrenCount()+"");
-                Log.e("TAGG catchildrenCount",dataSnapshot.child("categories").getChildrenCount()+"");
-                Log.e("TAGGYSD",dataSnapshot+"");
+                Log.e("TAGGYSD", dataSnapshot.getChildrenCount() + "");
+                Log.e("TAGG catchildrenCount", dataSnapshot.child("categories").getChildrenCount() + "");
+                Log.e("TAGGYSD", dataSnapshot + "");
 
                 recievedData(dataSnapshot);
 
@@ -123,7 +128,7 @@ To add an object
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-              recievedData(dataSnapshot);
+                recievedData(dataSnapshot);
             }
 
             @Override
@@ -135,8 +140,7 @@ To add an object
 
     }
 
-    void recievedData(DataSnapshot dataSnapshot)
-    {
+    void recievedData(DataSnapshot dataSnapshot) {
         GJSONSource obj = dataSnapshot.getValue(GJSONSource.class);
         String data = new Gson().toJson(obj);
 
@@ -181,9 +185,32 @@ To add an object
             password.setError("Minimum 8 characters required", d);
             password.requestFocus();
 
-        } else
-            startActivity(new Intent(MainActivity.this, AdminActivity.class));
+        } else {
 
+            if (login(username.getText().toString(), password.getText().toString()))
+                startActivity(new Intent(MainActivity.this, AdminActivity.class));
+
+        }
+    }
+
+    boolean login(String username, String password) {
+        User user = realm.where(User.class).equalTo("email", username).findFirst();
+
+        if (user == null) {
+            Toast.makeText(this, "Invalid username", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        if (!user.password.equals(password)) {
+            Toast.makeText(this, "Invalid password", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        Toast.makeText(this, "Login success", Toast.LENGTH_SHORT).show();
+        phoneno = user.phone;
+        type = user.type;
+
+        return true;
     }
 
 }
