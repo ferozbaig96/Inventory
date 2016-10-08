@@ -6,27 +6,16 @@ import android.os.Bundle;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.facebook.stetho.Stetho;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-import com.google.gson.Gson;
 import com.uphyca.stetho_realm.RealmInspectorModulesProvider;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import Models.GSONModel.GJSONSource;
-import Models.RealmModel.JSONSource;
 import Models.RealmModel.User;
+import getMyApplicationContext.MyApplication;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 
@@ -35,11 +24,7 @@ public class MainActivity extends AppCompatActivity {
     EditText username, password;
     Button login_btn;
 
-    final FirebaseDatabase database = FirebaseDatabase.getInstance();
-    DatabaseReference myRef = database.getReference();
-
     private Realm realm;
-    private RealmConfiguration realmConfig;
 
     long phoneno;
     int type = -1;
@@ -58,16 +43,22 @@ public class MainActivity extends AppCompatActivity {
                         .enableWebKitInspector(RealmInspectorModulesProvider.builder(this).build())
                         .build());
 
+        // Getting the Realm configuration
+        RealmConfiguration realmConfig = MyApplication.getInstance().getRealmConfig();
+
+        //TODO Resetting realm
+        // Realm.deleteRealm(realmConfig);
+
+        // Getting realm
+        realm = MyApplication.getInstance().getRealm();
+
         initialise();
+    }
 
-        // Create the Realm configuration
-        realmConfig = new RealmConfiguration.Builder(this).name("myRealm.realm").build();
-
-        //Resetting realm TODO
-        Realm.deleteRealm(realmConfig);
-
-        // Open the Realm for the UI thread.
-        realm = Realm.getInstance(realmConfig);
+    @Override
+    protected void onResume() {
+        super.onResume();
+        realm = MyApplication.getInstance().getRealm();
     }
 
     @Override
@@ -89,8 +80,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        addListeners();
-
 /*
 
 To add an object
@@ -105,67 +94,6 @@ To add an object
 */
     }
 
-    void addListeners() {
-        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-
-                Log.e("TAGGYSD", dataSnapshot.getChildrenCount() + "");
-                Log.e("TAGG catchildrenCount", dataSnapshot.child("categories").getChildrenCount() + "");
-                Log.e("TAGGYSD", dataSnapshot + "");
-
-                recievedData(dataSnapshot);
-
-                /*Toast.makeText(MainActivity.this, "Database updated. Please reopen app for the changes to take place", Toast.LENGTH_SHORT).show();*/
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });
-
-        myRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-
-                recievedData(dataSnapshot);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
-
-    }
-
-    void recievedData(DataSnapshot dataSnapshot) {
-        GJSONSource obj = dataSnapshot.getValue(GJSONSource.class);
-        String data = new Gson().toJson(obj);
-
-        JSONObject json = null;
-        try {
-            json = new JSONObject(data);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        realm.close();
-        Realm.deleteRealm(realmConfig);     //resetting realm
-        realm = Realm.getInstance(realmConfig);
-        loadJsonFromJsonObject(realm, json);
-
-    }
-
-    private void loadJsonFromJsonObject(Realm realm, final JSONObject json) {
-        realm.executeTransaction(new Realm.Transaction() {
-            @Override
-            public void execute(Realm realm) {
-                realm.createObjectFromJson(JSONSource.class, json);
-            }
-        });
-    }
 
     private void validateForm() {
         Drawable d = ResourcesCompat.getDrawable(getResources(), R.drawable.ic_error_red_500_24dp, null);
@@ -194,6 +122,9 @@ To add an object
     }
 
     boolean login(String username, String password) {
+
+        realm = MyApplication.getInstance().getRealm();
+
         User user = realm.where(User.class).equalTo("email", username).findFirst();
 
         if (user == null) {
