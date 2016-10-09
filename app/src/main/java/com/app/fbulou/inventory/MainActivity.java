@@ -20,10 +20,13 @@ import java.util.List;
 
 import Models.RealmModel.Category;
 import Models.RealmModel.Inventory;
+import Models.RealmModel.MyInteger;
+import Models.RealmModel.Order;
 import Models.RealmModel.Product;
 import Models.RealmModel.User;
 import getMyApplicationContext.MyApplication;
 import io.realm.Realm;
+import io.realm.RealmList;
 import io.realm.RealmResults;
 import io.realm.Sort;
 
@@ -327,4 +330,68 @@ To add an object
         return realmResults;
     }
 
+    //Orders
+    void addOrders(String cfname, String clname, String cemail, long phone, String payMethod,
+                   String address, String deliveryTime, long deliveryBoy, long salesman, double shipping,
+                   double subtotal, double tax, RealmList<MyInteger> products) {
+
+        //TODO check where is realm getting closed
+        realm = MyApplication.getInstance().getRealm();
+
+        int nOrders = realm.where(Order.class).findAll().size();
+
+        Order order = new Order();
+        order.id = nOrders + 1;
+        order.products = products;
+        order.subtotal = subtotal;
+        order.shipping = shipping;
+        order.client_lname = clname;
+        order.client_fname = cfname;
+        order.client_email = cemail;
+        order.cPhone = phone;
+        order.PaymentMethod = payMethod;
+        order.cAddress = address;
+        order.delivery_boy = deliveryBoy;
+        order.tax = tax;
+        order.cDeliveryTime = deliveryTime;
+        order.sales_man = salesman;
+
+        myRef.child("orders").push().setValue(order);
+    }
+
+    void removeOrder(String orderKey) {
+        myRef.child("orders").child(orderKey).removeValue();
+    }
+
+    void editOrder(String orderKey, String cfname, String clname, String cemail, long phone, String payMethod,
+                   String address, String deliveryTime, long deliveryBoy, long salesman, double shipping,
+                   double subtotal, double tax, RealmList<MyInteger> products) {
+
+        Order order = new Order();
+        order.products = products;
+        order.subtotal = subtotal;
+        order.shipping = shipping;
+        order.client_lname = clname;
+        order.client_fname = cfname;
+        order.client_email = cemail;
+        order.cPhone = phone;
+        order.PaymentMethod = payMethod;
+        order.cAddress = address;
+        order.delivery_boy = deliveryBoy;
+        order.tax = tax;
+        order.cDeliveryTime = deliveryTime;
+        order.sales_man = salesman;
+
+        myRef.child("orders").child(orderKey).setValue(order);
+    }
+
+    List<Order> getOrders() {
+        //TODO check where is realm getting closed
+        realm = MyApplication.getInstance().getRealm();
+
+        RealmResults<Order> realmResults = realm.where(Order.class).findAllSorted("id", Sort.DESCENDING);
+
+        Log.e("TAGGY", realmResults.toString());
+        return realmResults;
+    }
 }
