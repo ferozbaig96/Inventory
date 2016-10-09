@@ -4,10 +4,13 @@ import io.realm.RealmObject;
 
 public class Inventory extends RealmObject {
 
-    public int id;
-    public int product;
-    public int quantity;
-    public float price_per_item;
+    public long id;
+    public long product;
+    public long quantity;
+    public double price_per_item;
+
+    public String key;
+
 
     /*
         id

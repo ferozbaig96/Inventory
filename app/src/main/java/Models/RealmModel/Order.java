@@ -5,13 +5,19 @@ import io.realm.RealmObject;
 
 public class Order extends RealmObject {
 
-    public int id;
+    public long id;
     public String client_fname, client_lname, client_email;
     public String cAddress, cDeliveryTime, PaymentMethod;
     public long cPhone;
     public RealmList<MyInteger> products;
-    public float shipping, subtotal, tax;
-    public int delivery_boy, sales_man;
+    public double shipping;
+    public double subtotal;
+    public double tax;
+    public long delivery_boy;
+    public long sales_man;
+
+    public String key;
+
 
     /*
         id

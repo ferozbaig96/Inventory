@@ -4,8 +4,10 @@ import io.realm.RealmObject;
 
 public class Category extends RealmObject {
 
-    public int id;
-    public  String name;
+    public long id;
+    public String name;
+
+    public String key;
 
     /*
         id - int -pk

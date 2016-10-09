@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
     private Realm realm;
 
     long phoneno;
-    int type = -1;
+    long type = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.toolbar).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                removeCategory(3);
+                removeCategory(1);
                 //editCategory(2,"edited");
             }
         });

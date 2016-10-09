@@ -3,11 +3,12 @@ package Models.RealmModel;
 import io.realm.RealmObject;
 
 public class User extends RealmObject {
-    public int id;
+    public long id;
     public String name, email, password;
     public long phone;
-    public int type;
+    public long type;
 
+    public String key;
 
     /*
         id - int - pk
