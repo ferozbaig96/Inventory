@@ -64,9 +64,9 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.toolbar).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                addCatgeory("added");
-                //removeCategory(1);
-                //editCategory(2,"edited");
+                //addCatgeory("added");
+                //removeCategory("k3");
+                editCategory("k0", "edited");
             }
         });
 
@@ -164,8 +164,6 @@ To add an object
     //--------------------------Functionalities----------------------
 
 
-    //Add a category
-
     void addCatgeory(String categoryName) {
 
         //TODO check where is realm getting closed
@@ -180,20 +178,16 @@ To add an object
         myRef.child("categories").push().setValue(category);
     }
 
-    //Remove a category
-
     void removeCategory(String categoryKey) {
-        //TODO check where is realm getting closed
-        realm = MyApplication.getInstance().getRealm();
-
         myRef.child("categories").child(categoryKey).removeValue();
     }
 
-    //Edit a category
     void editCategory(String categoryKey, String categoryNewName) {
         Category category = new Category();
         category.name = categoryNewName;
 
         myRef.child("categories").child(categoryKey).setValue(category);
     }
+
+
 }

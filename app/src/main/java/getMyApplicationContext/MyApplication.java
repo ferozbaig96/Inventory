@@ -1,7 +1,6 @@
 package getMyApplicationContext;
 
 import android.app.Application;
-import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -137,6 +136,8 @@ public class MyApplication extends Application {
     }
 
     private void deleteOldRealm() {
+
+        Log.e("TAG", "deleteOldRealm() called");
         if (!realm.isClosed())
             realm.close();
         Realm.deleteRealm(realmConfig);     //resetting realm
