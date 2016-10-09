@@ -19,6 +19,7 @@ import com.uphyca.stetho_realm.RealmInspectorModulesProvider;
 import java.util.List;
 
 import Models.RealmModel.Category;
+import Models.RealmModel.Product;
 import Models.RealmModel.User;
 import getMyApplicationContext.MyApplication;
 import io.realm.Realm;
@@ -62,6 +63,8 @@ public class MainActivity extends AppCompatActivity {
         initialise();
     }
 
+    int i = 0;
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -69,10 +72,26 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.toolbar).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //addCatgeory("added");
-                //removeCategory("k3");
-                //editCategory("k0", "edited");
-                getCategories();
+
+                switch (i) {
+                    case 0:
+                        addProduct("new", 355, 45, 12, 35.678);
+                        break;
+
+                    case 1:
+                        editProduct("k0", "edited", 6777, 11, 1, 11111.11);
+                        break;
+
+                    case 2:
+                        removeProduct("k0");
+                        break;
+
+                    case 3:
+                        getProducts();
+                        break;
+                }
+
+                i++;
             }
         });
 
@@ -170,6 +189,7 @@ To add an object
     //--------------------------Functionalities----------------------
 
 
+    //Category
     void addCatgeory(String categoryName) {
 
         //TODO check where is realm getting closed
@@ -204,5 +224,50 @@ To add an object
         Log.e("TAGGY", realmResults.toString());
         return realmResults;
     }
+
+    //Product
+    void addProduct(String productName, long category, long curStockVal, long minStockVal, double price) {
+
+        //TODO check where is realm getting closed
+        realm = MyApplication.getInstance().getRealm();
+
+        int nProduct = realm.where(Product.class).findAll().size();
+
+        Product product = new Product();
+        product.id = nProduct + 1;
+        product.name = productName;
+        product.category = category;
+        product.current_stock = curStockVal;
+        product.minimum_stock = minStockVal;
+        product.price = price;
+
+        myRef.child("products").push().setValue(product);
+    }
+
+    void removeProduct(String productKey) {
+        myRef.child("products").child(productKey).removeValue();
+    }
+
+    void editProduct(String productKey, String productName, long category, long curStockVal, long minStockVal, double price) {
+        Product product = new Product();
+        product.name = productName;
+        product.category = category;
+        product.current_stock = curStockVal;
+        product.minimum_stock = minStockVal;
+        product.price = price;
+        myRef.child("products").child(productKey).setValue(product);
+    }
+
+    List<Product> getProducts() {
+        //TODO check where is realm getting closed
+        realm = MyApplication.getInstance().getRealm();
+
+        RealmResults<Product> realmResults = realm.where(Product.class).findAllSorted("id", Sort.DESCENDING);
+
+        Log.e("TAGGY", realmResults.toString());
+        return realmResults;
+    }
+
+
 
 }
