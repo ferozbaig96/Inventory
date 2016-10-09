@@ -76,11 +76,14 @@ public class MainActivity extends AppCompatActivity {
 
                 switch (i) {
                     case 0:
-                        addProduct("new", 355, 45, 12, 35.678);
+                        //addProduct("new", 355, 45, 12, 35.678);
+                        addUsers("newuser", "abc@aasd", "pwd", 2313, 2);
                         break;
 
                     case 1:
-                        editProduct("k0", "edited", 6777, 11, 1, 11111.11);
+                        // editProduct("k0", "edited", 6777, 11, 1, 11111.11);
+                        getUsers();
+
                         break;
 
                     case 2:
@@ -88,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
                         break;
 
                     case 3:
-                        getProducts();
+                        //getProducts();
                         break;
                 }
 
@@ -275,6 +278,51 @@ To add an object
         realm = MyApplication.getInstance().getRealm();
 
         RealmResults<Inventory> realmResults = realm.where(Inventory.class).findAllSorted("id", Sort.DESCENDING);
+        Log.e("TAGGY", realmResults.toString());
+        return realmResults;
+    }
+
+    //Users
+    void addUsers(String userName, String email, String password, long phone, long type) {
+
+        //TODO check where is realm getting closed
+        realm = MyApplication.getInstance().getRealm();
+
+        int nUsers = realm.where(User.class).findAll().size();
+
+        User user = new User();
+        user.id = nUsers + 1;
+        user.name = userName;
+        user.email = email;
+        user.password = password;
+        user.phone = phone;
+        user.type = type;
+
+        myRef.child("users").push().setValue(user);
+    }
+
+    void removeUser(String userKey) {
+        myRef.child("users").child(userKey).removeValue();
+    }
+
+    void editUser(String userKey, String userName, String email, String password, long phone, long type) {
+
+        User user = new User();
+        user.name = userName;
+        user.email = email;
+        user.password = password;
+        user.phone = phone;
+        user.type = type;
+
+        myRef.child("users").child(userKey).setValue(user);
+    }
+
+    List<User> getUsers() {
+        //TODO check where is realm getting closed
+        realm = MyApplication.getInstance().getRealm();
+
+        RealmResults<User> realmResults = realm.where(User.class).findAllSorted("id", Sort.DESCENDING);
+
         Log.e("TAGGY", realmResults.toString());
         return realmResults;
     }
