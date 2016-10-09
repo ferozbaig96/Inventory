@@ -19,6 +19,7 @@ import com.uphyca.stetho_realm.RealmInspectorModulesProvider;
 import java.util.List;
 
 import Models.RealmModel.Category;
+import Models.RealmModel.Inventory;
 import Models.RealmModel.Product;
 import Models.RealmModel.User;
 import getMyApplicationContext.MyApplication;
@@ -268,6 +269,14 @@ To add an object
         return realmResults;
     }
 
+    //Inventory
+    List<Inventory> getInventoryList() {
+        //TODO check where is realm getting closed
+        realm = MyApplication.getInstance().getRealm();
 
+        RealmResults<Inventory> realmResults = realm.where(Inventory.class).findAllSorted("id", Sort.DESCENDING);
+        Log.e("TAGGY", realmResults.toString());
+        return realmResults;
+    }
 
 }
