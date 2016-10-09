@@ -4,6 +4,7 @@ import android.app.Application;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.app.fbulou.inventory.MySharedPref;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -28,6 +29,8 @@ public class MyApplication extends Application {
     private static Realm realm;
     private static RealmConfiguration realmConfig;
 
+    private static MySharedPref mySharedPref;
+
     private DataSnapshot mDataSnapshot;
     boolean isInitialDataLoad = true;
 
@@ -35,6 +38,8 @@ public class MyApplication extends Application {
     public void onCreate() {
         super.onCreate();
         Instance = this;
+
+        mySharedPref = new MySharedPref(Instance.getApplicationContext());
 
         // Create the Realm configuration
         realmConfig = new RealmConfiguration.Builder(Instance.getApplicationContext()).name("myRealm.realm").build();
@@ -69,6 +74,10 @@ public class MyApplication extends Application {
 
     public RealmConfiguration getRealmConfig() {
         return realmConfig;
+    }
+
+    public static MySharedPref getMySharedPref() {
+        return mySharedPref;
     }
 
     void addFirebaseListeners() {

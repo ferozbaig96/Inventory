@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -15,10 +16,14 @@ import com.facebook.stetho.Stetho;
 import com.google.firebase.database.DatabaseReference;
 import com.uphyca.stetho_realm.RealmInspectorModulesProvider;
 
+import java.util.List;
+
 import Models.RealmModel.Category;
 import Models.RealmModel.User;
 import getMyApplicationContext.MyApplication;
 import io.realm.Realm;
+import io.realm.RealmResults;
+import io.realm.Sort;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -66,7 +71,8 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 //addCatgeory("added");
                 //removeCategory("k3");
-                editCategory("k0", "edited");
+                //editCategory("k0", "edited");
+                getCategories();
             }
         });
 
@@ -189,5 +195,14 @@ To add an object
         myRef.child("categories").child(categoryKey).setValue(category);
     }
 
+    List<Category> getCategories() {
+        //TODO check where is realm getting closed
+        realm = MyApplication.getInstance().getRealm();
+
+        RealmResults<Category> realmResults = realm.where(Category.class).findAllSorted("id", Sort.DESCENDING);
+
+        Log.e("TAGGY", realmResults.toString());
+        return realmResults;
+    }
 
 }
