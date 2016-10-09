@@ -15,7 +15,6 @@ import com.facebook.stetho.Stetho;
 import com.google.firebase.database.DatabaseReference;
 import com.uphyca.stetho_realm.RealmInspectorModulesProvider;
 
-import Models.GSONModel.GCategory;
 import Models.RealmModel.Category;
 import Models.RealmModel.User;
 import getMyApplicationContext.MyApplication;
@@ -65,7 +64,8 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.toolbar).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                removeCategory(1);
+                addCatgeory("added");
+                //removeCategory(1);
                 //editCategory(2,"edited");
             }
         });
@@ -173,29 +173,27 @@ To add an object
 
         int nCatgeory = realm.where(Category.class).findAll().size();
 
-        GCategory category = new GCategory();
+        Category category = new Category();
         category.id = nCatgeory + 1;
         category.name = categoryName;
 
-        myRef.child("categories").child(nCatgeory + "").setValue(category);
+        myRef.child("categories").push().setValue(category);
     }
 
     //Remove a category
 
-    void removeCategory(int categoryId) {
+    void removeCategory(String categoryKey) {
         //TODO check where is realm getting closed
         realm = MyApplication.getInstance().getRealm();
 
-        myRef.child("categories").child(categoryId + "").removeValue();
+        myRef.child("categories").child(categoryKey).removeValue();
     }
 
     //Edit a category
-
-    void editCategory(int categoryId, String categoryNewName) {
-        GCategory category = new GCategory();
-        category.id = categoryId;
+    void editCategory(String categoryKey, String categoryNewName) {
+        Category category = new Category();
         category.name = categoryNewName;
 
-        myRef.child("categories").child(categoryId + "").setValue(category);
+        myRef.child("categories").child(categoryKey).setValue(category);
     }
 }
