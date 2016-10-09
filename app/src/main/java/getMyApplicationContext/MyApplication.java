@@ -50,9 +50,13 @@ public class MyApplication extends Application {
         return Instance.getApplicationContext();
     }
 
+    public DatabaseReference getMyDatabaseRef() {
+        return myDatabaseRef;
+    }
+
     public Realm getRealm() {
 
-        if (realm==null || realm.isClosed()) {
+        if (realm == null || realm.isClosed()) {
             try {
                 // Open the Realm
                 realm = Realm.getInstance(realmConfig);
@@ -115,7 +119,7 @@ public class MyApplication extends Application {
 
         realm.close();
         Realm.deleteRealm(realmConfig);     //resetting realm
-        realm = Realm.getInstance(realmConfig);
+        realm=getRealm();
         loadJsonFromJsonObject(realm, json);
 
     }

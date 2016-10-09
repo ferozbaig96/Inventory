@@ -12,18 +12,21 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.facebook.stetho.Stetho;
+import com.google.firebase.database.DatabaseReference;
 import com.uphyca.stetho_realm.RealmInspectorModulesProvider;
 
+import Models.GSONModel.GCategory;
+import Models.RealmModel.Category;
 import Models.RealmModel.User;
 import getMyApplicationContext.MyApplication;
 import io.realm.Realm;
-import io.realm.RealmConfiguration;
 
 public class MainActivity extends AppCompatActivity {
 
     EditText username, password;
     Button login_btn;
 
+    DatabaseReference myRef = MyApplication.getInstance().getMyDatabaseRef();
     private Realm realm;
 
     long phoneno;
@@ -44,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
                         .build());
 
         // Getting the Realm configuration
-        RealmConfiguration realmConfig = MyApplication.getInstance().getRealmConfig();
+        //RealmConfiguration realmConfig = MyApplication.getInstance().getRealmConfig();
 
         //TODO Resetting realm
         // Realm.deleteRealm(realmConfig);
@@ -58,7 +61,15 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        realm = MyApplication.getInstance().getRealm();
+
+        findViewById(R.id.toolbar).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                removeCategory(3);
+                //editCategory(2,"edited");
+            }
+        });
+
     }
 
     @Override
@@ -91,6 +102,9 @@ To add an object
         myRef.child("categories").push().setValue(category);
 
         myRef.child("categories").child("serially_in_order").setValue(category);
+
+        For serially_in_order, we can use :
+        myRef.child("categories").getChildrenCount() + 1;       // + 1 for currently added category
 */
     }
 
@@ -123,6 +137,8 @@ To add an object
 
     boolean login(String username, String password) {
 
+        //TODO check where is realm getting closed
+
         realm = MyApplication.getInstance().getRealm();
 
         User user = realm.where(User.class).equalTo("email", username).findFirst();
@@ -144,4 +160,42 @@ To add an object
         return true;
     }
 
+
+    //--------------------------Functionalities----------------------
+
+
+    //Add a category
+
+    void addCatgeory(String categoryName) {
+
+        //TODO check where is realm getting closed
+        realm = MyApplication.getInstance().getRealm();
+
+        int nCatgeory = realm.where(Category.class).findAll().size();
+
+        GCategory category = new GCategory();
+        category.id = nCatgeory + 1;
+        category.name = categoryName;
+
+        myRef.child("categories").child(nCatgeory + "").setValue(category);
+    }
+
+    //Remove a category
+
+    void removeCategory(int categoryId) {
+        //TODO check where is realm getting closed
+        realm = MyApplication.getInstance().getRealm();
+
+        myRef.child("categories").child(categoryId + "").removeValue();
+    }
+
+    //Edit a category
+
+    void editCategory(int categoryId, String categoryNewName) {
+        GCategory category = new GCategory();
+        category.id = categoryId;
+        category.name = categoryNewName;
+
+        myRef.child("categories").child(categoryId + "").setValue(category);
+    }
 }
