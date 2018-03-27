@@ -226,7 +226,7 @@ To add an object
         //TODO check where is realm getting closed
         realm = MyApplication.getInstance().getRealm();
 
-        RealmResults<Category> realmResults = realm.where(Category.class).findAllSorted("id", Sort.DESCENDING);
+        RealmResults<Category> realmResults = realm.where(Category.class).sort("id", Sort.DESCENDING).findAll();
 
         Log.e("TAGGY", realmResults.toString());
         return realmResults;
@@ -269,7 +269,7 @@ To add an object
         //TODO check where is realm getting closed
         realm = MyApplication.getInstance().getRealm();
 
-        RealmResults<Product> realmResults = realm.where(Product.class).findAllSorted("id", Sort.DESCENDING);
+        RealmResults<Product> realmResults = realm.where(Product.class).sort("id", Sort.DESCENDING).findAll();
 
         Log.e("TAGGY", realmResults.toString());
         return realmResults;
@@ -280,7 +280,7 @@ To add an object
         //TODO check where is realm getting closed
         realm = MyApplication.getInstance().getRealm();
 
-        RealmResults<Inventory> realmResults = realm.where(Inventory.class).findAllSorted("id", Sort.DESCENDING);
+        RealmResults<Inventory> realmResults = realm.where(Inventory.class).sort("id", Sort.DESCENDING).findAll();
         Log.e("TAGGY", realmResults.toString());
         return realmResults;
     }
@@ -324,7 +324,7 @@ To add an object
         //TODO check where is realm getting closed
         realm = MyApplication.getInstance().getRealm();
 
-        RealmResults<User> realmResults = realm.where(User.class).findAllSorted("id", Sort.DESCENDING);
+        RealmResults<User> realmResults = realm.where(User.class).sort("id", Sort.DESCENDING).findAll();
 
         Log.e("TAGGY", realmResults.toString());
         return realmResults;
@@ -389,7 +389,7 @@ To add an object
         //TODO check where is realm getting closed
         realm = MyApplication.getInstance().getRealm();
 
-        RealmResults<Order> realmResults = realm.where(Order.class).findAllSorted("id", Sort.DESCENDING);
+        RealmResults<Order> realmResults = realm.where(Order.class).sort("id", Sort.DESCENDING).findAll();
 
         Log.e("TAGGY", realmResults.toString());
         return realmResults;

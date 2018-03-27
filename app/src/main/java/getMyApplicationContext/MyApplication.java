@@ -42,7 +42,8 @@ public class MyApplication extends Application {
         mySharedPref = new MySharedPref(Instance.getApplicationContext());
 
         // Create the Realm configuration
-        realmConfig = new RealmConfiguration.Builder(Instance.getApplicationContext()).name("myRealm.realm").build();
+        Realm.init(this);
+        realmConfig = new RealmConfiguration.Builder().name("myRealm.realm").build();
 
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         myDatabaseRef = firebaseDatabase.getReference();
